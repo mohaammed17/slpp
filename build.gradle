@@ -1,0 +1,76 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.1'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java']
+		}
+		resources {
+			srcDirs = ['src/main/resources']
+		}
+		
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	//web development
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+
+	//database connectivity
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'com.mysql:mysql-connector-j'
+	
+	//jsps
+	implementation 'jakarta.servlet:jakarta.servlet-api'
+	//implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	//implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+	runtimeOnly 'org.apache.tomcat.embed:tomcat-embed-jasper:10.1.9' // jsps
+    runtimeOnly 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.0'
+
+	//devtools 
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	
+	//testing
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Add JSP API dependency
+	implementation 'jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.0.0'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+
+
+tasks.register('copyWebapp', Copy) {
+	from('src/main/webapp/WEB-INF/views') {
+		include '**/*'
+	}
+	into "$buildDir/resources/main/WEB-INF/views"
+}
+
+processResources.dependsOn(copyWebapp)
